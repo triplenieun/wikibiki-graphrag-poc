@@ -28,6 +28,7 @@ TEMPLATES = [{
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DATA_UPLOAD_MAX_MEMORY_SIZE = 262144
+CSRF_FAILURE_VIEW = "graphlab.rag_views.csrf_failure"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",

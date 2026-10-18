@@ -28,6 +28,7 @@ def index(request):
         "project": "Django + Neo4j 입문 실습",
         "guide": "README.md",
         "routes": [
+            "/graphrag/",
             "/api/services/",
             "/api/services/order-service/context/",
             "/api/services/auth-service/impact/",

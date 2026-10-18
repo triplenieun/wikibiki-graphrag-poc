@@ -1,0 +1,105 @@
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>GraphLab · 서비스 지식 탐색</title>
+  <link rel="stylesheet" href="{% static 'graphlab/graphrag.css' %}?v=workbench-20261018-2">
+  <script src="{% static 'graphlab/graphrag.js' %}?v=documents-manage-20261018" defer></script>
+</head>
+<body>
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="icon-graph" viewBox="0 0 24 24"><path d="m7 7 10 4M7 8l2 9m3 1 6-5"/><circle cx="5" cy="5" r="3"/><circle cx="20" cy="12" r="3"/><circle cx="10" cy="20" r="3"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="icon-code" viewBox="0 0 24 24"><path d="m7 7-5 5 5 5m10-10 5 5-5 5m-3-14-4 22"/></symbol>
+    <symbol id="icon-document" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8zm0 0v5h5M8 12h8m-8 4h6"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 9a8 8 0 1 0 0 6m0-12v6h-6"/></symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m10 3 2.5 6.5L19 12l-6.5 2.5L10 21l-2.5-6.5L1 12l6.5-2.5zm10-2v6m-3-3h6"/></symbol>
+    <symbol id="icon-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+    <symbol id="icon-help" viewBox="0 0 24 24"><path d="M12 21s-4-3-10-2V3c6-1 10 2 10 2s4-3 10-2v16c-6-1-10 2-10 2Zm0-16v16"/></symbol>
+    <symbol id="icon-box" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7zm0 10 9-5m-9 5L3 7m9 5v10"/></symbol>
+    <symbol id="icon-team" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m2-16a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v3"/></symbol>
+  </defs></svg>
+  <a class="skip-link" href="#question">질문 입력으로 건너뛰기</a>
+  <aside class="sidebar" aria-label="작업 공간">
+    <a class="brand" href="/graphrag/" aria-label="GraphLab 홈"><span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#icon-graph"/></svg></span><span>graph<span class="brand-light">lab</span><small>RELATIONSHIPS TO ANSWERS</small></span></a>
+    <span class="nav-caption">WORKSPACE</span>
+    <nav aria-label="실습 탐색">
+      <a class="nav-link active" href="#question" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg>지식 탐색<span class="nav-dot"></span></a>
+      <a class="nav-link" id="graph-nav" href="#graph-panel"><svg class="icon" aria-hidden="true"><use href="#icon-graph"/></svg>관계 그래프</a>
+      <a class="nav-link" id="trace-nav" href="#graph-panel"><svg class="icon" aria-hidden="true"><use href="#icon-code"/></svg>Cypher 기록</a>
+      <a class="nav-link" href="#sources-section"><svg class="icon" aria-hidden="true"><use href="#icon-document"/></svg>근거 문서</a>
+    </nav>
+    <div class="sidebar-model"><span class="nav-caption">EXPLORE THE CONNECTIONS</span><h2>작은 그래프,<br>명확한 근거.</h2><p>서비스와 팀, 문서를 연결해<br>답변이 만들어지는 과정을<br>직접 확인하세요.</p><div class="model-chain" aria-label="서비스, 팀, 문서 연결"><svg class="icon" aria-hidden="true"><use href="#icon-box"/></svg><i></i><svg class="icon" aria-hidden="true"><use href="#icon-team"/></svg><i></i><svg class="icon" aria-hidden="true"><use href="#icon-document"/></svg></div></div>
+    <div class="sidebar-bottom"><a class="nav-link help-link" href="#how-it-works"><svg class="icon" aria-hidden="true"><use href="#icon-help"/></svg>실습 가이드</a><div class="connection-label"><span class="connection-dot" id="sidebar-connection-dot"></span><span id="sidebar-connection">연결 확인 중</span></div><span class="sidebar-note">LOCAL LEARNING WORKSPACE</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><div class="breadcrumb">Workspace <span>/</span><strong>GraphRAG 실습실</strong></div><span class="topbar-tag"><span></span>로컬 실습 환경</span></header>
+    <main>
+      <section class="page-heading" aria-labelledby="page-title"><div><div class="eyebrow">EXPLORE. CONNECT. UNDERSTAND.</div><h1 id="page-title">서비스 지식 탐색<span>.</span></h1><p>서비스의 의존 관계부터 담당팀과 운영 문서까지, 연결을 따라 근거를 찾습니다.</p></div><div class="workspace-label"><svg class="icon" aria-hidden="true"><use href="#icon-graph"/></svg><span>GRAPH<span>RAG LAB</span></span></div></section>
+      <section class="connection-strip" aria-label="시스템 연결 상태">
+        <div class="connection-item"><span class="system-symbol"><svg class="icon" aria-hidden="true"><use href="#icon-database"/></svg></span><div><span class="system-name">그래프 데이터베이스</span><strong>Neo4j <span class="status-badge checking" id="neo4j-badge">확인 중</span></strong></div></div>
+        <div class="connection-item model-item"><span class="system-symbol model-symbol"><svg class="icon" aria-hidden="true"><use href="#icon-spark"/></svg></span><div><span class="system-name">답변 생성 모델<span id="provider-name"></span></span><strong><span id="model-name">설정 확인 중</span><span class="status-badge checking" id="llm-badge">확인 중</span></strong></div></div>
+        <div class="connection-stat"><strong id="node-count">—</strong><span>노드</span><i></i><strong id="edge-count">—</strong><span>관계</span></div>
+        <button class="refresh-button" id="refresh-status" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-refresh"/></svg><span>연결 확인</span></button>
+      </section>
+      <div id="connection-notice" class="notice" role="status" hidden></div>
+      <div class="workflow-strip" aria-label="실습 순서"><ol><li><a href="#query-title"><span>01</span>질문과 탐색 조건</a></li><li><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg><a href="#graph-panel"><span>02</span>관계와 근거 확인</a></li><li><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg><a href="#answer-card"><span>03</span>답변 검증</a></li></ol><span class="workflow-status" id="workflow-status">탐색 준비</span></div>
+      <div class="work-grid">
+        <section class="card query-card" aria-labelledby="query-title">
+          <div class="section-heading"><div><span class="section-index">01</span><h2 id="query-title">탐색 시작하기</h2></div><svg class="icon section-icon" aria-hidden="true"><use href="#icon-search"/></svg></div>
+          <form id="question-form">
+            {% csrf_token %}
+            <label for="question" class="field-label">어떤 연결이 궁금한가요?</label>
+            <textarea id="question" name="question" rows="4" maxlength="2000" required placeholder="주문 서비스는 어디에 의존하고, 어떤 팀과 문서를 확인해야 할까?" aria-describedby="question-hint"></textarea>
+            <div class="input-caption"><span id="question-hint">그래프에 저장된 관계와 문서에서 검색</span><span id="character-count">0 / 2,000</span></div>
+            <div class="field-grid"><div><label for="service-id" class="field-label">대상 서비스</label><select id="service-id" name="service_id"><option value="">질문에서 자동 선택</option></select></div><div><label for="intent" class="field-label">탐색 방식</label><select id="intent" name="intent" aria-describedby="intent-hint"><option value="auto">질문에서 자동 선택</option><option value="context">담당팀 · 운영 문서</option><option value="impact">장애 영향 후보</option></select></div></div>
+            <p class="field-hint" id="intent-hint">질문을 바탕으로 담당팀·문서 또는 장애 영향 후보를 탐색합니다.</p>
+            <div class="form-actions"><button class="primary-button" id="retrieve-button" type="submit" disabled><svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg>근거만 조회<svg class="icon action-arrow" aria-hidden="true"><use href="#icon-arrow"/></svg></button><button class="secondary-button" id="ask-button" type="button" disabled><svg class="icon" aria-hidden="true"><use href="#icon-spark"/></svg>답변 생성</button></div>
+            <p class="action-hint">LLM 없이도 근거를 조회할 수 있어요.<kbd>Ctrl / ⌘ + Enter</kbd></p>
+          </form>
+          <div class="examples"><span class="examples-title">예제로 빠르게 시작하기</span>
+            <button type="button" class="example-button" aria-pressed="false" data-service="order-service" data-intent="context" data-question="주문 서비스의 담당팀과 의존 서비스, 관련 운영 문서를 알려줘."><span class="example-index">01</span><span><strong>주문 서비스의 연결 구조</strong><small>의존 서비스 · 담당팀 · 문서</small></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+            <button type="button" class="example-button" aria-pressed="false" data-service="auth-service" data-intent="impact" data-question="인증 서비스에 장애가 나면 어떤 서비스가 영향을 받을 수 있어?"><span class="example-index">02</span><span><strong>인증 장애의 영향 후보</strong><small>역방향 의존 관계 · 최대 5홉</small></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+            <button type="button" class="example-button" aria-pressed="false" data-service="payment-service" data-intent="context" data-question="결제 서비스의 담당팀과 확인해야 할 운영 문서를 알려줘."><span class="example-index">03</span><span><strong>결제 서비스 운영 문서</strong><small>담당팀 · 원문 출처</small></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+          </div>
+        </section>
+        <section class="card graph-card" id="graph-panel" aria-labelledby="graph-title">
+          <div class="section-heading graph-heading"><div><span class="section-index">02</span><h2 id="graph-title">관계 탐색</h2></div><span class="tiny-label">KNOWLEDGE GRAPH</span></div>
+          <div class="graph-tabs-row"><div class="tab-bar" role="tablist" aria-label="검색 과정 보기"><button type="button" id="graph-tab" class="tab active" role="tab" aria-controls="graph-view" aria-selected="true" tabindex="0"><svg class="icon" aria-hidden="true"><use href="#icon-graph"/></svg>관계 그래프</button><button type="button" id="trace-tab" class="tab" role="tab" aria-controls="trace-view" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#icon-code"/></svg>Cypher 기록<span id="trace-count">0</span></button></div><span class="read-only-label">READ ONLY</span></div>
+          <div id="graph-view" role="tabpanel" aria-labelledby="graph-tab">
+            <div class="graph-toolbar"><span id="graph-caption">전체 연결 구조</span><button type="button" class="text-button" id="clear-highlight" hidden>전체 보기</button></div>
+            <div id="graph-loading" class="graph-state"><span class="spinner" aria-hidden="true"></span><p>그래프를 불러오는 중입니다.</p></div>
+            <div id="graph-error" class="graph-state" role="status" hidden></div>
+            <div class="graph-canvas" id="graph-canvas" tabindex="0" role="region" aria-label="관계 그래프. 작은 화면에서는 방향키로 이동할 수 있습니다." hidden><svg id="knowledge-graph" viewBox="0 0 800 600" role="group" aria-labelledby="svg-title svg-description"><title id="svg-title">Neo4j의 서비스, 팀, 문서 연결 그래프</title><desc id="svg-description">노드를 선택하면 상세 정보를 확인할 수 있습니다. 동일한 연결 목록은 아래에서 펼쳐 볼 수 있습니다.</desc></svg></div>
+            <div class="graph-bottom-bar"><div class="graph-legend"><span><i class="legend-dot service"></i>서비스 <b id="service-count">—</b></span><span><i class="legend-dot team"></i>팀 <b id="team-count">—</b></span><span><i class="legend-dot document"></i>문서 <b id="document-count">—</b></span><span class="legend-selection"><i></i>검색 근거</span></div><div class="zoom-controls" role="group" aria-label="그래프 배율"><button type="button" id="zoom-out" aria-label="그래프 축소"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><button type="button" id="zoom-reset" aria-label="그래프 배율 초기화"><span id="zoom-level">100%</span></button><button type="button" id="zoom-in" aria-label="그래프 확대"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-7-7v14"/></svg></button></div></div>
+            <div id="node-detail" class="node-detail" aria-live="polite"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg><p>노드를 선택하면 서비스, 팀, 문서의 상세 정보를 볼 수 있어요.</p></div>
+            <details class="graph-accessible-list"><summary>텍스트로 연결 목록 보기</summary><ul id="graph-edges-list"></ul></details>
+          </div>
+          <div id="trace-view" role="tabpanel" aria-labelledby="trace-tab" hidden><div class="trace-intro"><span class="code-eyebrow">UNDER THE HOOD</span><h3>질문이 어떤 조회가 되었을까요?</h3><p>실행한 Cypher와 매개변수, 실제 반환 데이터를 확인하며 관계 탐색 과정을 이해해 보세요.</p></div><div id="trace-list"><div class="trace-empty"><svg class="icon" aria-hidden="true"><use href="#icon-code"/></svg><p>근거를 조회하면 실행 기록이 여기에 표시됩니다.</p></div></div></div>
+        </section>
+        <section class="card answer-card" aria-labelledby="answer-title" aria-busy="false" id="answer-card">
+          <div class="section-heading"><div><span class="section-index">03</span><h2 id="answer-title">답변과 확인된 사실</h2></div><span class="result-label" id="answer-label">탐색 대기</span></div>
+          <p id="result-summary" class="result-summary" hidden></p>
+          <div id="request-error" class="request-error" role="alert" hidden></div>
+          <div id="request-progress" class="request-progress" role="status" hidden><span class="spinner" aria-hidden="true"></span><span id="progress-text"></span></div>
+          <div class="answer-empty" id="answer-empty"><div class="empty-icon" aria-hidden="true"><svg class="icon"><use href="#icon-spark"/></svg></div><div><h3>연결을 찾으면, 답변의 근거가 보입니다.</h3><p>먼저 예제를 선택하고 <strong>근거만 조회</strong>해 보세요.<br>확인된 사실을 읽은 뒤 LLM으로 답변을 생성할 수 있습니다.</p></div></div>
+          <div id="answer-content" class="answer-content" hidden></div>
+          <div id="citation-warning" class="notice citation-notice" role="status" hidden></div>
+          <div id="facts-content" class="facts-content" hidden><h3><span class="fact-indicator"></span>그래프에서 확인한 사실<span class="citation-key">[G]</span></h3><ul id="facts-list"></ul></div>
+          <div id="answer-meta" class="answer-meta" hidden></div>
+          <div class="answer-footnote"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg><span>답변의 <strong>[G]</strong>는 그래프, <strong>[D#]</strong>는 문서 근거입니다. 원문과 함께 확인하세요.</span></div>
+        </section>
+        <section class="card sources-card" id="sources-section" aria-labelledby="sources-title"><div class="section-heading"><div><svg class="icon section-icon" aria-hidden="true"><use href="#icon-document"/></svg><h2 id="sources-title">근거 문서</h2><span class="count-badge" id="source-count">0</span></div><span class="tiny-label">SOURCES</span></div><div id="sources-list"><div class="sources-empty"><svg class="icon" aria-hidden="true"><use href="#icon-document"/></svg><p>답변을 원문까지 따라가세요.<br><span>조회한 문서의 출처와 본문이 여기에 모입니다.</span></p></div></div></section>
+      </div>
+      <section class="how-card" id="how-it-works" aria-labelledby="how-title"><div class="how-heading"><span class="eyebrow">LEARN BY EXPLORING</span><h2 id="how-title">GraphRAG,<br>이렇게 연결됩니다.</h2><p>답변보다 먼저, 근거를 이해하는 실습.</p></div><ol class="process-list"><li><span class="step-icon">1</span><div><strong>서비스를 찾고</strong><p>질문이나 선택한 값으로<br>탐색 대상을 정합니다.</p></div></li><li><span class="step-icon">2</span><div><strong>관계를 따라가고</strong><p>Cypher로 의존 관계, 담당팀,<br>운영 문서를 조회합니다.</p></div></li><li><span class="step-icon">3</span><div><strong>근거로 답변합니다</strong><p>LLM이 조회한 사실과 문서를<br>바탕으로 답변을 생성합니다.</p></div></li></ol></section>
+      <footer class="page-footer"><span><strong>graphlab</strong> · 서비스 지식 그래프 실습</span><span>Django <i>/</i> Neo4j <i>/</i> GraphRAG</span></footer>
+    </main>
+  </div>
+  <div class="sr-only" id="result-announcement" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
