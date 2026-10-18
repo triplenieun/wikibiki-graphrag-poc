@@ -30,6 +30,7 @@ def index(request):
         "routes": [
             "/graphrag/",
             "/documents/",
+            "/documents/manage/",
             "/api/services/",
             "/api/services/order-service/context/",
             "/api/services/auth-service/impact/",
