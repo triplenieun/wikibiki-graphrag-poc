@@ -1,0 +1,5 @@
+# Optional NVIDIA GPU acceleration. Use together with compose.yaml.
+# docker compose -f compose.yaml -f compose.gpu.yaml --profile llm up -d
+services:
+  ollama:
+    gpus: all

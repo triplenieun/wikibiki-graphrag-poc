@@ -1,0 +1,9 @@
+# Resolved on Python 3.14.8; install this file for reproducible practice.
+# requirements.in describes the supported direct dependency ranges.
+asgiref==3.12.1
+Django==5.2.18
+neo4j==6.4.1
+python-dotenv==1.2.4
+pytz==2026.5
+sqlparse==0.6.0
+tzdata==2026.5
