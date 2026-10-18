@@ -29,6 +29,7 @@ def index(request):
         "guide": "README.md",
         "routes": [
             "/graphrag/",
+            "/documents/",
             "/api/services/",
             "/api/services/order-service/context/",
             "/api/services/auth-service/impact/",

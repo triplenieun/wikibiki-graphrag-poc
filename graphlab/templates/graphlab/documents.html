@@ -1,0 +1,64 @@
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>문서 등록 · GraphLab</title>
+  <link rel="stylesheet" href="{% static 'graphlab/documents.css' %}">
+  <script src="{% static 'graphlab/documents.js' %}" defer></script>
+</head>
+<body class="documents-page">
+  <a class="skip-link" href="#document-title">문서 입력으로 건너뛰기</a>
+  <aside class="sidebar" aria-label="작업 공간">
+    <a class="brand" href="/graphrag/" aria-label="GraphLab 홈"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><path d="M9 10 27 18 12 29 9 10Z" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="10" r="4" fill="currentColor"/><circle cx="27" cy="18" r="4" fill="currentColor"/><circle cx="12" cy="29" r="4" fill="currentColor"/></svg><span>graph<span class="brand-light">lab</span><small>KNOWLEDGE WORKSPACE</small></span></a>
+    <div class="nav-caption">WORKSPACE</div>
+    <a class="nav-link" href="/graphrag/">GraphRAG 탐색</a>
+    <a id="register-navigation" class="nav-link active" href="/documents/" aria-current="page">문서 등록 <span class="nav-dot"></span></a>
+    <a id="manage-navigation" class="nav-link" href="/documents/manage/">문서 관리</a>
+    <div class="sidebar-guide"><span class="guide-number">02 / CONNECT</span><p>문서의 지식을,<br>그래프의 연결로.</p><span>추출된 관계를 직접 검토하고<br>검색 가능한 지식으로 저장하세요.</span></div>
+    <div class="sidebar-bottom"><span class="sidebar-note">Django + Neo4j</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><div class="breadcrumb">Workspace <span>/</span><strong id="document-breadcrumb">문서 등록</strong></div><a id="document-back" class="back-to-search" href="/graphrag/">GraphRAG로 돌아가기 →</a></header>
+    <main>
+      <section class="page-heading" aria-labelledby="page-title"><div><div class="eyebrow">BUILD YOUR KNOWLEDGE</div><h1 id="page-title">문서를 연결하세요<span>.</span></h1><p id="document-heading-help">LLM이 찾은 서비스와 팀, 관계를 확인한 뒤 그래프에 저장합니다.</p></div></section>
+      <div id="document-edit-note" class="document-edit-note" hidden><strong>문서와 관계를 함께 수정합니다.</strong><p>원문·제목·출처를 바꾸면 관계를 다시 추출해 주세요. 관계만 수정할 때는 저장된 검토 목록을 바로 편집할 수 있습니다. 저장 시 이 문서의 기존 관계 목록을 검토한 목록으로 교체합니다. 다른 문서와 공유하거나 별도로 등록된 관계는 유지됩니다.</p></div>
+      <ol class="document-steps" aria-label="문서 등록 순서"><li id="step-input" class="current" aria-current="step"><span>01</span><div><strong>문서 입력</strong><small>텍스트 또는 파일</small></div></li><li id="step-review"><span>02</span><div><strong>관계 검토</strong><small>확인하고 수정</small></div></li><li id="step-save"><span>03</span><div><strong>그래프에 저장</strong><small>검색에 즉시 반영</small></div></li></ol>
+      <p id="document-status" class="document-status" role="status" aria-live="polite">기존 서비스와 팀을 불러오는 중입니다.</p>
+      <div id="document-error" class="document-error" role="alert" hidden></div>
+      <p id="document-conflict-help" class="document-conflict-help" hidden>입력한 수정 내용은 이 화면에 유지됩니다. <a id="view-latest-document" href="/documents/manage/" target="_blank" rel="noopener">최신 문서를 새 탭에서 확인하기 ↗</a></p>
+      <div class="document-layout">
+        <section class="document-card input-card" aria-labelledby="input-heading">
+          <div class="document-section-title"><span>01</span><h2 id="input-heading">어떤 문서를 등록할까요?</h2></div><p class="section-help">운영 가이드나 서비스 설명에서 현재의 관계를 찾습니다. 저장 전까지 Neo4j 데이터는 바뀌지 않습니다.</p>
+          <form id="document-form">
+            {% csrf_token %}
+            <fieldset id="document-fields">
+              <div class="doc-field"><label for="document-title">문서 제목 <span>필수</span></label><input id="document-title" name="title" type="text" maxlength="200" required placeholder="예: 주문 서비스 운영 가이드"></div>
+              <div class="doc-field"><label for="document-source">출처 <span>선택</span></label><input id="document-source" name="source" type="text" maxlength="500" placeholder="예: 사내 위키 주소 또는 문서 경로"><p class="field-help">나중에 답변의 근거를 추적할 수 있는 위치를 적어 주세요.</p></div>
+              <div class="file-import"><label for="document-file">텍스트 파일 가져오기</label><input id="document-file" type="file" accept=".txt,.md,text/plain,text/markdown" aria-describedby="file-help"><p id="file-help" class="field-help">UTF-8 TXT·Markdown, 최대 64 KB. 내용은 아래 본문에 채워집니다.</p></div>
+              <div class="doc-field"><label for="document-body">문서 본문 <span>필수</span></label><textarea id="document-body" name="body" rows="10" maxlength="12000" required placeholder="예: 주문 서비스는 결제 서비스를 호출하며, 커머스팀이 담당한다." aria-describedby="body-help body-count"></textarea><div class="body-caption"><p id="body-help">최대 12,000자. 원문 그대로 붙여 넣어 주세요.</p><span id="body-count">0 / 12,000</span></div></div>
+            </fieldset>
+            <button id="extract-button" type="submit" class="doc-primary" disabled>관계 추출하기 <span aria-hidden="true">→</span></button><p class="extract-help">서버에 설정된 LiteLLM 또는 로컬 LLM을 사용합니다.</p>
+          </form>
+          <details class="document-example"><summary>처음이라면 이 예제로 시작해 보세요</summary><p>주문 서비스는 결제 서비스를 호출하며, 커머스팀이 담당한다. 결제 서비스의 장애가 발생하면 주문의 결제 단계가 영향을 받을 수 있다.</p><button id="use-document-example" type="button" class="doc-secondary">예제 채우기</button></details>
+        </section>
+        <section class="document-card review-card" aria-labelledby="review-heading">
+          <div class="document-section-title"><span>02</span><h2 id="review-heading" tabindex="-1">추출 결과를 검토하세요</h2></div>
+          <div id="review-empty" class="review-empty"><svg viewBox="0 0 72 72" fill="none" aria-hidden="true"><path d="M18 18h22l12 12v24H18z M40 18v12h12 M26 38h18 M26 45h12" stroke="currentColor" stroke-width="1.8"/><circle cx="54" cy="51" r="11" fill="var(--paper)" stroke="currentColor" stroke-width="1.8"/><path d="m49 51 3 3 6-7" stroke="currentColor" stroke-width="1.8"/></svg><h3>문서 속 관계가 여기에 나타납니다.</h3><p>서비스·팀을 기존 노드에 연결하고,<br>각 관계가 원문과 일치하는지 확인하세요.</p><div class="review-example"><span>문서</span><i>설명 →</i><span>서비스</span><i>담당팀 →</i><span>팀</span></div></div>
+          <div id="review-content" hidden>
+            <p id="extraction-meta" class="extraction-meta"></p><div id="extraction-warnings" class="extraction-warnings" hidden></div>
+            <details class="review-document"><summary>저장할 문서 원문 확인</summary><strong id="review-document-title"></strong><p id="review-document-source"></p><pre id="review-document-body"></pre></details>
+            <div class="review-subheading"><h3>서비스 · 팀 <span id="node-review-count"></span></h3><button id="add-node" type="button" class="doc-secondary">노드 추가</button></div><p class="section-help">이미 있는 대상은 기존 노드에 연결하세요. 연결된 기존 노드의 이름과 설명은 바뀌지 않습니다.</p><div id="node-editors" class="node-editors"></div>
+            <div class="review-subheading"><h3>관계 <span id="relation-review-count"></span></h3><button id="add-relation" type="button" class="doc-secondary">관계 추가</button></div><p class="section-help">체크된 관계만 저장합니다. 근거 문장에는 원문의 일부를 그대로 입력하세요. 문서 → 서비스의 ‘설명’ 관계가 하나 이상 필요합니다.</p><div id="relation-editors" class="relation-editors"></div>
+            <section id="save-panel" class="save-panel" aria-labelledby="save-heading"><div class="document-section-title"><span>03</span><h2 id="save-heading">검토한 지식을 저장하세요</h2></div><p id="save-summary"></p><label class="review-confirmation" for="review-confirmed"><input id="review-confirmed" type="checkbox"><span>서비스·팀의 연결, 관계의 방향, 근거 문장을 확인했습니다.</span></label><button id="save-button" type="button" class="doc-primary" disabled>검토한 내용 저장하기</button><p class="field-help">저장 즉시 GraphRAG 검색에 반영됩니다.</p></section>
+          </div>
+          <div id="save-success" class="save-success" role="status" hidden><span class="success-mark" aria-hidden="true">✓</span><h3>그래프에 저장했습니다.</h3><p id="save-success-message"></p><div id="save-warnings" class="extraction-warnings" hidden></div><a id="search-new-document" class="doc-primary" href="/graphrag/">GraphRAG에서 질문하기 →</a><a class="doc-secondary management-return" href="/documents/manage/">문서 목록으로 돌아가기</a><button id="new-document" type="button" class="doc-secondary">다른 문서 등록하기</button></div>
+        </section>
+      </div>
+      <footer class="page-footer"><span>서비스 · 팀 · 문서가 연결되는 지식 공간</span><span>등록 → 검토 → 검색</span></footer>
+    </main>
+  </div>
+</body>
+</html>
