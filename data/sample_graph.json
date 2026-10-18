@@ -1,0 +1,65 @@
+{
+  "teams": [
+    {"id": "commerce-team", "name": "커머스팀"},
+    {"id": "platform-team", "name": "플랫폼팀"},
+    {"id": "payment-team", "name": "결제팀"}
+  ],
+  "services": [
+    {
+      "id": "order-service",
+      "name": "주문 서비스",
+      "description": "가상 주문을 접수하며 인증 서비스와 결제 서비스에 의존합니다.",
+      "owner_id": "commerce-team"
+    },
+    {
+      "id": "auth-service",
+      "name": "인증 서비스",
+      "description": "가상 사용자의 인증 상태를 확인합니다.",
+      "owner_id": "platform-team"
+    },
+    {
+      "id": "payment-service",
+      "name": "결제 서비스",
+      "description": "가상 결제 요청을 처리하며 인증 서비스에 의존합니다.",
+      "owner_id": "payment-team"
+    },
+    {
+      "id": "notification-service",
+      "name": "알림 서비스",
+      "description": "가상 알림 발송 요청을 처리하며 인증 서비스에 의존합니다.",
+      "owner_id": "platform-team"
+    }
+  ],
+  "documents": [
+    {
+      "id": "order-guide",
+      "title": "주문 서비스 확인 가이드",
+      "source": "docs/samples/order-guide.md",
+      "service_id": "order-service"
+    },
+    {
+      "id": "auth-guide",
+      "title": "인증 서비스 확인 가이드",
+      "source": "docs/samples/auth-guide.md",
+      "service_id": "auth-service"
+    },
+    {
+      "id": "payment-guide",
+      "title": "결제 서비스 확인 가이드",
+      "source": "docs/samples/payment-guide.md",
+      "service_id": "payment-service"
+    },
+    {
+      "id": "notification-guide",
+      "title": "알림 서비스 확인 가이드",
+      "source": "docs/samples/notification-guide.md",
+      "service_id": "notification-service"
+    }
+  ],
+  "dependencies": [
+    {"source_id": "order-service", "target_id": "auth-service"},
+    {"source_id": "order-service", "target_id": "payment-service"},
+    {"source_id": "payment-service", "target_id": "auth-service"},
+    {"source_id": "notification-service", "target_id": "auth-service"}
+  ]
+}
