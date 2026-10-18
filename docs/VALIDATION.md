@@ -2,6 +2,48 @@
 
 검증일: **2026-10-18 (Asia/Seoul)**.
 
+저장소: [triplenieun/wikibiki-graphrag-poc](https://github.com/triplenieun/wikibiki-graphrag-poc).
+
+## GitHub 게시·새 clone 재현 검증
+
+완료된 작업을 다음 순서로 나눠 `main`에 올렸습니다. 각 커밋을 별도 폴더로 내보내
+Django 시스템 검사와 그 시점의 기본 테스트가 통과하는 것도 확인했습니다.
+
+| 커밋 | 작업 범위 |
+|---|---|
+| [`e5fc6d0`](https://github.com/triplenieun/wikibiki-graphrag-poc/commit/e5fc6d0) | Python 3.14·Django·Neo4j 실행 환경, 의존성·Git 제외 규칙 |
+| [`ac8ea40`](https://github.com/triplenieun/wikibiki-graphrag-poc/commit/ac8ea40) | 서비스·팀·문서 기본 그래프, Cypher, 관리 명령·조회 API |
+| [`d93a58c`](https://github.com/triplenieun/wikibiki-graphrag-poc/commit/d93a58c) | GraphRAG 검색, LiteLLM·Ollama, 그래프 화면 |
+| [`458a65a`](https://github.com/triplenieun/wikibiki-graphrag-poc/commit/458a65a) | 문서 등록, 관계 추출·검토·저장 |
+| [`cbc7a2f`](https://github.com/triplenieun/wikibiki-graphrag-poc/commit/cbc7a2f) | 문서 관리, 관계 철회·공유 관계 보존·검색 갱신 |
+| [`9cc8d88`](https://github.com/triplenieun/wikibiki-graphrag-poc/commit/9cc8d88) | 초보자 가이드, 사용 설명서, Python·JavaScript CI |
+
+위 코드 버전을 GitHub에서 **존재하지 않던 새 폴더**로 clone하여 다음을 확인했습니다.
+
+1. 원래 작업 폴더의 `.env`만 복사하고 파일 해시가 동일한지 확인했습니다. `.venv`나 소스 파일을 추가로 복사하지 않았습니다.
+2. clone 안에서 Python 3.14 가상환경을 새로 만들고 `pip install -r requirements.txt`, `pip check`를 통과했습니다.
+3. 별도 Compose 프로젝트와 **새 빈 Neo4j 볼륨**을 사용했습니다. 기존 실습 DB와 충돌하지 않도록 검증용 포트만 `17474/17687`로 바꿨습니다. `.env`는 그대로 유지하고 검증 프로세스의 `NEO4J_URI`만 해당 포트로 지정했습니다.
+4. `check`, `check_neo4j`, `seed_graph`가 성공했고 초기 그래프는 노드 11개·관계 12개였습니다.
+5. 실제 DB를 포함한 Django 테스트 **102개**, JavaScript 회귀 테스트 **1개**가 모두 통과했습니다.
+6. `collectstatic --noinput`으로 정적 파일 6개를 수집했습니다. 세 페이지와 JS·CSS 여섯 개가 실제 HTTP 200으로 제공됐습니다.
+7. GraphRAG 근거 조회와 로컬 Qwen 모델의 실제 답변 생성을 확인했습니다. 사내 LiteLLM 실서버는 이 검증에서도 접근하지 않았습니다.
+8. 실제 HTTP와 CSRF로 문서 추출 → 검토한 관계 저장 → 검색 반영 → 수정 → 삭제 → 상세 404 및 검색 제외를 확인했습니다.
+9. clone의 Git 작업 트리가 깨끗하며 `.env`, `.venv`, 정적 수집 결과, 검증 파일이 추적되지 않는 것을 확인했습니다. 전체 커밋 이력에도 실제 `.env` 비밀값이 없습니다.
+
+검증용 clone은 원래 작업 폴더의 `.test-artifacts/clone-verification/`에 보관합니다.
+검증용 Django 서버와 별도 Neo4j 컨테이너·볼륨은 검증 후 정리합니다.
+원래 실습용 Neo4j·Ollama와 그 데이터는 그대로 유지합니다. clone은 코드만 복제하므로
+원래 DB에 등록한 문서 데이터가 새 DB로 자동 복사되지는 않습니다.
+
+같은 PC에서 기존 환경에 연결하려면 새 clone에 `.env`를 복사한 뒤 새 가상환경에서
+README 명령을 실행하면 됩니다. 원래 Compose 프로젝트가 실행 중이면 동일한 DB를
+공유하므로 별도 DB 검증과 혼동하지 마세요.
+
+GitHub Actions도 Ubuntu·Python 3.14·독립 Neo4j에서 성공했습니다.
+[최초 게시 CI 실행](https://github.com/triplenieun/wikibiki-graphrag-poc/actions/runs/39134932988)에서
+Python 테스트와 Node.js 24의 JavaScript 검사까지 확인했습니다.
+이후 검증 기록만 추가하는 커밋은 앱 코드와 의존성을 변경하지 않습니다.
+
 ## 검증 환경
 
 | 구성요소 | 실제 사용 버전 |
@@ -125,8 +167,7 @@ Browser 화면을 수동 조작하는 과정 자체는 자동화 검증하지 �
 - 실제 회사 내부망·사내 서버·프록시·사내 Django 프로젝트와의 연동
 - Docker 이미지 tar의 다른 PC 반입 및 `docker load` 과정
 - 물리적으로 네트워크가 차단된 PC에서의 전체 설치
-- macOS/Linux 호스트에서의 Python 실행
-- GitHub Actions 실행: 설정 파일만 제공했으며 저장소를 외부에 게시하지 않았습니다.
+- macOS 호스트에서의 Python 실행과 Linux 데스크톱에서의 수동 브라우저 실습
 - 실제 사내 LiteLLM 서버의 네트워크·인증·배포 모델 호환성
 - 운영 부하, 백업/복구, 사용자 인증·문서별 접근 권한
 

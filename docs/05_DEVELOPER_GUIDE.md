@@ -200,7 +200,7 @@ node --test tests/test_graphrag_freshness.mjs
 ```
 
 GitHub Actions 설정은 `.github/workflows/tests.yml`에 있습니다.
-GitHub에 올리면 독립된 Neo4j 서비스와 Python 3.14로 같은 테스트를 실행하도록 구성했습니다.
+독립된 Neo4j 서비스와 Python 3.14로 같은 테스트를 실행하고, Node.js 24로 화면 갱신 회귀 테스트와 JavaScript 문법을 검사합니다.
 현재 로컬 검증 결과는 [VALIDATION.md](VALIDATION.md)를 확인하세요.
 
 ## 버전 갱신
