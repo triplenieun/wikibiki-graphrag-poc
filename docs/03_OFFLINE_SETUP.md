@@ -117,7 +117,7 @@ docker save --output offline/neo4j-2026.09.0.tar neo4j:2026.09.0
 사내에서 GitHub나 사내 미러에 접속할 수 있으면 승인된 주소로 clone합니다. 접근할 수 없다면 준비 PC에서 **커밋된 소스**를 bundle로 만들 수 있습니다. 미커밋 수정은 bundle에 포함되지 않습니다.
 
 ```bash
-git bundle create offline/wikibiki-graphrag.bundle --all
+git bundle create offline/wikibiki-graphrag.bundle main
 ```
 
 파일을 모두 준비한 후 프로젝트 루트에서 SHA-256 목록을 만듭니다. 기존 목록 자체는 계산에서 제외합니다.
@@ -153,14 +153,14 @@ GitHub 연결이 가능하면 2절과 같이 clone합니다. bundle을 반입했
 Linux:
 
 ```bash
-git clone /APPROVED_TRANSFER/offline/wikibiki-graphrag.bundle wikibiki-graphrag-poc
+git clone --branch main /APPROVED_TRANSFER/offline/wikibiki-graphrag.bundle wikibiki-graphrag-poc
 cd wikibiki-graphrag-poc
 ```
 
 Windows PowerShell:
 
 ```powershell
-git clone C:\APPROVED_TRANSFER\offline\wikibiki-graphrag.bundle wikibiki-graphrag-poc
+git clone --branch main C:\APPROVED_TRANSFER\offline\wikibiki-graphrag.bundle wikibiki-graphrag-poc
 cd wikibiki-graphrag-poc
 ```
 
