@@ -68,6 +68,7 @@ LITELLM_API_KEY=YOUR_APPLICATION_KEY
 | [GraphRAG 사용 가이드](docs/07_GRAPHRAG_GUIDE.md) | LLM 연결, 질문·근거·답변 확인, 내부망 전환 |
 | [문서 등록과 관계 추출](docs/08_DOCUMENT_INGESTION.md) | 문서 입력, LLM 추출, 미리보기 수정, 저장과 검색 반영 |
 | [문서 목록·수정·삭제](docs/09_DOCUMENT_MANAGEMENT.md) | 원문 개정, 관계 교체·철회, 공유 관계 보존, 동시 수정 충돌 |
+| [문서 두 개로 직접 실습](docs/10_HANDS_ON_SCENARIO.md) | 복사할 가상 문서, 관계 미리보기 기준, 테스트 질문과 기대 결과 |
 | [검증 기록](docs/VALIDATION.md) | 이 작업 환경에서 실제 실행한 검증과 실행하지 못한 항목 |
 
 ## 프로젝트 구성
