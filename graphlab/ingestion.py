@@ -56,6 +56,11 @@ DESCRIBES의 evidence도 target 서비스가 무엇인지 설명하는 본문 �
 {"source_id":"return-service","type":"OWNED_BY","target_id":"commerce-team","evidence":"반품 서비스는 커머스팀이 담당한다."}]}
 예제의 doc-example은 실제 document.id로 교체하세요. 예제에만 있는 서비스·팀·문장을 실제 결과에 복사하지 마세요.
 아무 사실도 없으면 {"nodes":[],"relations":[]}를 반환하세요.
+최종 JSON을 출력하기 전에 다음 조건을 모두 확인하세요.
+1. nodes 배열에는 Service 또는 Team만 넣습니다. Document 노드 및 document.id를 가진 항목은 절대 넣지 않습니다. 문서는 시스템이 별도로 저장합니다.
+2. relations 배열의 각 항목은 source_id, type, target_id, evidence 네 필드만 포함합니다. 노드 객체(id, kind, name, description)를 relations에 넣지 않습니다.
+3. DESCRIBES는 문서에서 Service로만 연결합니다. Team을 도착점으로 삼을 때에는 Service에서 Team으로 OWNED_BY를 연결합니다.
+4. 본문에 담당팀이 명시되어 있으면 해당 서비스와 팀의 OWNED_BY 관계를 빠뜨리지 않습니다.
 """.strip()
 
 
