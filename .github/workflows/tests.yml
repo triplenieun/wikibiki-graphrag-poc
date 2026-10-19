@@ -1,4 +1,4 @@
-name: Python 3.14 and Neo4j lab
+name: Python 3.10.12 and 3.14 with Neo4j
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -7,7 +7,12 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # The exact legacy 3.10.12 runtime has a setup-python build for Ubuntu 22.04.
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10.12", "3.14"]
     timeout-minutes: 10
     services:
       neo4j:
@@ -36,9 +41,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: ${{ matrix.python-version }}
           cache: pip
-      - run: python -m pip install -r requirements.txt
+      - name: Prepare wheels for offline installation
+        run: python -m pip download --only-binary=:all: --dest .test-artifacts/wheels -r requirements.txt
+      - name: Install only from the wheel bundle
+        run: python -m pip install --no-index --find-links .test-artifacts/wheels -r requirements.txt
       - run: python -m pip check
       - run: python manage.py check
       - run: python manage.py test --verbosity 2
