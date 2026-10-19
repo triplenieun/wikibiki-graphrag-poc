@@ -51,8 +51,8 @@ Groq는 일반 추론 입력·출력을 기본적으로 보관하지 않지만, 
 ## 3. 모델 실행을 Django와 분리한 이유
 
 ```text
-브라우저 → Django(Python 3.14) → Neo4j: 근거 조회
-                         └──→ Ollama 또는 사내 LiteLLM: 근거로 답변 생성
+브라우저 → Django(Python 3.10.12 / 개발용 3.14) → Neo4j: 근거 조회
+                                            └──→ Ollama 또는 사내 LiteLLM: 근거로 답변 생성
 ```
 
 Django는 HTTP로 모델 서버에 요청합니다. Python 가상환경에 PyTorch, Transformers, GPU용 패키지를 추가하지 않아도 됩니다. 모델 실행 환경과 Django 개발 환경을 각각 관리할 수 있고, `.env`로 외부 실습용 Ollama와 사내 LiteLLM 연결을 바꿀 수 있습니다.

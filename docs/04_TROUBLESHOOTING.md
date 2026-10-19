@@ -9,15 +9,17 @@ python --version
 Get-Command python
 ```
 
-Python 3.14 설치 경로가 선택되어야 합니다. Microsoft Store 안내가 열리거나 다른 버전이 나오면 설치 경로와 Windows의 앱 실행 별칭을 확인합니다. 필요하면 Python 3.14 실행 파일의 실제 경로로 가상환경을 만듭니다.
+사내 기준인 Python 3.10.12 설치 경로가 선택되어야 합니다. 별도의 3.14 개발 환경도 사용할 수 있지만, 사내 설치용 패키지는 사내 버전에 맞춰 준비하세요. Microsoft Store 안내가 열리거나 다른 버전이 나오면 설치 경로와 Windows의 앱 실행 별칭을 확인합니다. 필요하면 회사가 제공한 Python 실행 파일의 실제 경로로 가상환경을 만듭니다.
 
 ```powershell
-& 'C:\YOUR_PYTHON314_PATH\python.exe' -m venv .venv
+& 'C:\YOUR_PYTHON310_PATH\python.exe' -m venv .venv
 ```
 
 위 경로는 예시이므로 실제 설치 경로로 바꾸세요. 잘못된 Python으로 이미 만든 가상환경의 버전은 패키지 설치만으로 바뀌지 않습니다. 새 이름의 가상환경을 만들어 다시 설치하거나, 기존 가상환경을 교체할 때는 해당 폴더가 이 프로젝트의 `.venv`인지 먼저 확인합니다.
 
-`py` 명령에 설치된 Python이 없다고 나와도, `python --version`이 3.14를 올바르게 표시하면 이 문서의 `python` 경로로 진행할 수 있습니다.
+`py` 명령에 설치된 Python이 없다고 나와도, `python --version`이 사내 버전인 3.10.12를 올바르게 표시하면 이 문서의 `python` 경로로 진행할 수 있습니다. Python 3.10.12 공식 배포는 Windows 설치 파일을 제공하지 않으므로 회사의 기존 런타임을 먼저 확인하세요.
+
+Linux에서는 `python3.10 --version`으로 버전을 확인하고 `python3.10 -m venv .venv`로 만듭니다. `venv` 또는 `ensurepip`가 없다는 오류가 나면 해당 Python용 가상환경 지원 패키지를 회사의 승인된 OS 패키지 저장소나 반입 파일로 준비합니다.
 
 ## PowerShell에서 Activate.ps1 실행이 차단됩니다
 
@@ -39,7 +41,7 @@ Python 3.14 설치 경로가 선택되어야 합니다. Microsoft Store 안내�
 .\.venv\Scripts\python.exe -m pip check
 ```
 
-내부망에서는 위 설치 명령 대신 [오프라인 설치 명령](03_OFFLINE_SETUP.md#6-내부망-pc에서-설치하기)을 사용합니다.
+내부망에서는 위 설치 명령 대신 [오프라인 설치 명령](03_OFFLINE_SETUP.md)을 사용합니다. 준비한 wheel과 실제 Python 버전이 다르면 `No matching distribution found` 등이 발생할 수 있으므로, 3.14용으로 준비했던 패키지를 사내 3.10.12 환경에 그대로 사용하지 않습니다.
 
 ## docker 명령 또는 docker compose 명령을 찾지 못합니다
 
@@ -49,11 +51,15 @@ Docker 실행 환경과 Compose가 설치되어 있는지 확인하고 새 Power
 
 ## 이미지 다운로드가 실패합니다
 
+사내에서는 이미지 다운로드를 하지 않고, 준비 PC에서 저장한 tar 파일을 반입합니다.
+
 ```powershell
-docker compose pull
+docker image load --input offline/neo4j-2026.09.0.tar
+docker image inspect neo4j:2026.09.0 --format '{{.Os}}/{{.Architecture}}'
+docker compose up -d --pull never --wait neo4j
 ```
 
-인터넷 연결, 사내 프록시·레지스트리 정책, Docker 로그를 확인합니다. 내부망에서는 `pull`을 실행하지 않고 준비 PC에서 저장한 이미지를 `docker load`한 뒤 `docker compose up -d --pull never`로 시작합니다. 정확한 이미지 태그가 `neo4j:2026.09.0`인지 확인하세요.
+정확한 이미지 태그가 `neo4j:2026.09.0`인지, 이미지의 Linux CPU 아키텍처가 사내 Docker 엔진과 맞는지 확인하세요. 이미지가 없다는 오류는 파일 반입·불러오기 누락이나 태그 차이일 수 있습니다. tar를 만들 때는 `docker image save`를 사용하며 `docker export`로 만든 컨테이너 파일은 대신 쓸 수 없습니다. [반입 절차](03_OFFLINE_SETUP.md)를 확인하세요.
 
 ## 7474 또는 7687 포트가 이미 사용 중입니다
 

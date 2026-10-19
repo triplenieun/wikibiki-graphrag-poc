@@ -200,13 +200,14 @@ node --test tests/test_graphrag_freshness.mjs
 ```
 
 GitHub Actions 설정은 `.github/workflows/tests.yml`에 있습니다.
-독립된 Neo4j 서비스와 Python 3.14로 같은 테스트를 실행하고, Node.js 24로 화면 갱신 회귀 테스트와 JavaScript 문법을 검사합니다.
+독립된 Neo4j 서비스와 Python 3.10.12·3.14 매트릭스로 같은 테스트를 실행하고, Node.js 24로 화면 갱신 회귀 테스트와 JavaScript 문법을 검사합니다.
 현재 로컬 검증 결과는 [VALIDATION.md](VALIDATION.md)를 확인하세요.
 
 ## 버전 갱신
 
 `requirements.txt`는 직접·간접 의존성을 고정합니다. `requirements.in`은 직접 의존성의 허용 범위입니다.
 일상 설치는 `requirements.txt`를 사용하고, 버전 갱신은 별도 가상환경에서 의도적으로 수행합니다.
+사내 기준은 Python 3.10.12이며 3.14 개발 환경도 지원합니다. 새 코드와 의존성을 추가할 때 두 버전에서 확인하고, 3.11 이상에서만 제공하는 표준 라이브러리나 문법에 무심코 의존하지 않도록 합니다. 사내 반입용 wheel은 대상 Python·OS·CPU 아키텍처에 맞춰 준비하며 개발 PC의 가상환경을 복사하지 않습니다.
 회사 Django 버전이 다르면 공식 Python 호환성 표를 확인하고 의존성 및 테스트를 함께 갱신하세요.
 
 참고: [Django Python 호환성](https://docs.djangoproject.com/en/5.2/faq/install/#what-python-version-can-i-use-with-django),

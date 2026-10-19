@@ -1,6 +1,6 @@
 # Neo4j 첫 실습: 서비스·팀·문서 연결하기
 
-Python 3.14와 Django를 사용해 **서비스 → 의존 서비스 → 담당팀 → 운영 문서**를 조회하는 실습 프로젝트입니다. 기본 그래프 실습은 AI 없이 실행할 수 있고, GraphRAG 페이지는 조회한 근거를 사내 LiteLLM 서버에 전달해 답변을 생성합니다. 개인 PC에서 검증할 때는 로컬 Ollama를 선택할 수 있습니다.
+사내 **Python 3.10.12**와 Django를 사용해 **서비스 → 의존 서비스 → 담당팀 → 운영 문서**를 조회하는 실습 프로젝트입니다. Python 3.14 개발 환경도 지원합니다. 기본 그래프 실습은 AI 없이 실행할 수 있고, GraphRAG 페이지는 조회한 근거를 사내 LiteLLM 서버에 전달해 답변을 생성합니다. 사내에서는 Neo4j Docker 이미지를 파일로 반입하며, 개인 PC에서 검증할 때는 로컬 Ollama를 선택할 수 있습니다.
 
 실습을 마치면 다음을 할 수 있습니다.
 
@@ -84,8 +84,8 @@ DB 포트는 로컬 PC에서만 접속하도록 설정되어 있습니다. Djang
 
 ### 버전 기준
 
-- Python **3.14**
-- Django **5.2.18 LTS**: Python 3.14 지원은 5.2.8부터입니다. 이 저장소는 호환되는 패치 버전을 `requirements.txt`에 고정합니다. [Django 공식 지원 안내](https://docs.djangoproject.com/en/5.2/releases/5.2/#python-compatibility)
+- Python **3.10.12**: 사내에 이미 설치된 실행 환경 기준입니다. **3.14**는 별도 개발 환경에서 사용할 수 있습니다.
+- Django **5.2.18 LTS**: Python 3.10과 3.14를 지원하는 버전입니다. 이 저장소는 호환되는 패키지 버전을 `requirements.txt`에 고정합니다. [Django 공식 지원 안내](https://docs.djangoproject.com/en/5.2/releases/5.2/#python-compatibility)
 - Neo4j 공식 Python 드라이버 **6.4.1**: 정확한 의존성 목록은 `requirements.txt`가 기준입니다. [드라이버 설치 문서](https://neo4j.com/docs/python-manual/current/install/)
 - Neo4j Community Docker 이미지 **`neo4j:2026.09.0`**: 공식 배포 태그를 고정합니다. [Neo4j Docker 안내](https://neo4j.com/docs/operations-manual/current/docker/introduction/)
 
@@ -95,7 +95,7 @@ DB 포트는 로컬 PC에서만 접속하도록 설정되어 있습니다. Djang
 
 아래 기본 경로는 **Windows PowerShell** 기준입니다. 인터넷이 없는 PC에서는 먼저 [내부망 반입·실행](docs/03_OFFLINE_SETUP.md)을 따르세요.
 
-1. [Python 공식 다운로드](https://www.python.org/downloads/windows/)에서 Python 3.14 일반 빌드를 설치합니다. 설치 후 PowerShell에서 `python` 명령을 사용할 수 있어야 합니다.
+1. 사내에 설치된 **Python 3.10.12**의 실행 경로와 버전을 확인합니다. [Python 3.10.12 공식 배포](https://www.python.org/downloads/release/python-31012/)는 Windows 설치 파일을 제공하지 않는 소스 배포이므로, Windows에서 해당 버전이 필요하면 회사가 제공하는 실행 환경을 사용합니다. 외부 개발 PC에서 새로 준비하는 경우에는 [Python 공식 다운로드](https://www.python.org/downloads/windows/)의 Python 3.14 일반 빌드를 사용할 수 있습니다.
 2. [Docker Desktop for Windows 설치 안내](https://docs.docker.com/desktop/setup/install/windows-install/)에 따라 Docker Desktop을 설치합니다. Windows에서는 WSL 2 등 안내된 실행 조건을 갖추고, **Linux 컨테이너**를 사용합니다. 설치 완료 후 Docker Desktop을 실행하세요. 회사 PC에서는 회사가 승인한 Docker 실행 환경을 사용합니다.
 3. GitHub에서 내려받을 계획이라면 [Git](https://git-scm.com/downloads)도 설치합니다.
 
@@ -108,7 +108,7 @@ docker compose version
 git --version
 ```
 
-첫 줄이 `Python 3.14.x`여야 합니다. `py` 런처가 설치되어 있지 않아도 `python`이 올바르게 실행되면 실습할 수 있습니다. `docker --version`은 설치 여부만 확인하므로, Docker Desktop도 실행되어 있어야 합니다.
+사내 실행 환경은 첫 줄이 `Python 3.10.12`인지 확인합니다. 별도 3.14 개발 환경에서는 `Python 3.14.x`가 표시됩니다. `py` 런처가 설치되어 있지 않아도 `python`이 올바르게 실행되면 실습할 수 있습니다. `docker --version`은 설치 여부만 확인하므로, Docker Desktop도 실행되어 있어야 합니다.
 
 Docker로 Neo4j를 실행하므로 PC에 Java나 Neo4j를 별도로 설치할 필요는 없습니다.
 
@@ -126,10 +126,12 @@ cd wikibiki-graphrag-poc
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe --version
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install --no-index --find-links .\offline\wheels -r requirements.txt
 ```
 
-가상환경은 이 프로젝트의 Python 패키지를 다른 프로젝트와 분리하는 폴더입니다. 이후 `python.exe`의 전체 상대 경로를 사용하는 이유는 **항상 이 가상환경을 사용하기 위해서**입니다. PowerShell의 활성화 스크립트나 실행 정책 변경은 필요하지 않습니다.
+위 설치 명령은 [내부망 반입·실행](docs/03_OFFLINE_SETUP.md)에서 준비한 Python 패키지가 `offline/wheels`에 있다고 가정합니다. 인터넷이나 승인된 사내 패키지 저장소에서 설치할 수 있는 개발 환경에서는 대신 `.\.venv\Scripts\python.exe -m pip install -r requirements.txt`를 사용합니다.
+
+가상환경은 이 프로젝트의 Python 패키지를 다른 프로젝트와 분리하는 폴더입니다. 이후 `python.exe`의 전체 상대 경로를 사용하는 이유는 **항상 이 가상환경을 사용하기 위해서**입니다. PowerShell의 활성화 스크립트나 실행 정책 변경은 필요하지 않습니다. 기존 3.14 가상환경을 복사해 3.10에서 사용하지 말고, 사내 Python으로 새로 만드세요.
 
 설치된 패키지의 의존 관계를 확인합니다.
 
@@ -141,15 +143,16 @@ python -m venv .venv
 
 ### macOS/Linux에서는
 
-Python 3.14와 Docker가 설치된 환경에서 다음을 사용합니다.
+사내 Linux에서 Python 3.10.12와 Docker가 설치된 경우 다음을 사용합니다. `python3.10 --version`이 `Python 3.10.12`인지 먼저 확인하세요. 해당 Python용 `venv` 모듈도 필요합니다. 없으면 회사가 승인한 OS 패키지나 Python 설치 자원으로 먼저 준비합니다.
 
 ```bash
-python3.14 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
+python3.10 --version
+python3.10 -m venv .venv
+.venv/bin/python -m pip install --no-index --find-links ./offline/wheels -r requirements.txt
 cp .env.example .env
 ```
 
-아래 안내의 `.\.venv\Scripts\python.exe`를 `.venv/bin/python`으로 바꾸면 됩니다. PowerShell 전용 `Copy-Item`, `Get-Content`, `Invoke-RestMethod`도 각각 파일 복사, 파일 보기, `curl` 등 해당 OS의 도구로 바꿉니다.
+이미 `.env`가 있으면 마지막 복사 명령은 생략합니다. macOS/Linux의 별도 3.14 개발 환경에서는 `python3.10` 대신 설치된 `python3.14`를 사용합니다. 아래 안내의 `.\.venv\Scripts\python.exe`를 `.venv/bin/python`으로 바꾸면 됩니다. PowerShell 전용 `Copy-Item`, `Get-Content`, `Invoke-RestMethod`도 각각 파일 복사, 파일 보기, `curl` 등 해당 OS의 도구로 바꿉니다.
 
 ## 3. 접속 설정 만들기
 
@@ -177,13 +180,17 @@ notepad .env
 
 ## 4. Neo4j 시작하기
 
+사내에서는 [내부망 반입·실행](docs/03_OFFLINE_SETUP.md)에 따라 준비 PC에서 저장한 `neo4j-2026.09.0.tar`를 `offline` 폴더로 반입한 뒤 실행합니다.
+
 ```powershell
-docker compose pull
-docker compose up -d
+docker image load --input offline/neo4j-2026.09.0.tar
+docker compose up -d --pull never --wait neo4j
 docker compose ps
 ```
 
-`pull`은 고정된 Neo4j 이미지를 내려받고, `up -d`는 DB를 백그라운드에서 실행합니다. 첫 다운로드와 DB 초기화에는 시간이 걸릴 수 있습니다.
+`load`는 파일에서 이미지를 불러오고, `--pull never`는 실행 중 이미지 다운로드를 시도하지 않도록 합니다. 처음에는 DB 초기화에 시간이 걸릴 수 있습니다. 기존에 같은 이미지를 불러왔다면 `load`는 생략합니다. 사내 LiteLLM을 사용하므로 Ollama 이미지는 필요하지 않습니다.
+
+인터넷이 되는 준비·개발 PC에서만 `docker compose pull neo4j`로 이미지를 내려받을 수 있습니다. 사내에 이미 전용 Neo4j DB가 있다면 이 컨테이너 시작 단계 대신 `.env`를 해당 DB의 접속 정보에 맞춥니다.
 
 아직 DB가 준비되지 않았다면 로그를 확인하세요.
 
@@ -331,7 +338,7 @@ docker compose down
 데이터는 Docker의 이름 있는 볼륨에 보관되어 다시 시작해도 유지됩니다.
 
 ```powershell
-docker compose up -d
+docker compose up -d --pull never --wait neo4j
 .\.venv\Scripts\python.exe manage.py check_neo4j
 ```
 

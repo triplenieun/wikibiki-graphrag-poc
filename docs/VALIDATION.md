@@ -1,8 +1,32 @@
 # 실행 검증 기록
 
-검증일: **2026-10-18 (Asia/Seoul)**.
+최근 검증일: **2026-10-19 (Asia/Seoul)**. 아래 기존 게시·clone 기록은 2026-10-18의 결과입니다.
 
 저장소: [triplenieun/wikibiki-graphrag-poc](https://github.com/triplenieun/wikibiki-graphrag-poc).
+
+## Python 3.10.12·파일 반입 검증 (2026-10-19)
+
+사내 Python 버전이 3.10.12로 확인되어 실행 기준과 오프라인 문서를 갱신했습니다.
+기존 Django·Neo4j 드라이버 등의 버전은 유지하고, Python 3.10에서 asgiref가 요구하는
+`typing_extensions==4.15.0`을 고정 목록에 추가했습니다. 새 Python을 사용하는 준비 PC에서도
+반입용 wheel을 빠뜨리지 않도록 이 항목에는 Python 버전 조건을 붙이지 않았습니다.
+
+- 공식 `python:3.10.12-slim-bookworm`의 **정확한 Python 3.10.12**로 실행했습니다.
+- Windows의 Python 3.14 준비 환경에서 대상 Python·플랫폼을 지정해 wheel **8개**를 받았습니다.
+- 네트워크가 없는 컨테이너에서 새 가상환경을 만들고 `pip install --no-index --find-links`로 설치했습니다.
+  `pip check`와 Django `check`가 통과했습니다.
+- 이후 외부 연결이 차단된 별도 Docker 네트워크에 새 Neo4j를 띄워 **102개 테스트가 모두 통과**했습니다.
+  이 중 실제 DB 통합 테스트는 19개이며, 기존 실습 DB는 사용하지 않았습니다.
+- Windows의 Python 3.14.8에서도 별도 새 가상환경에 같은 wheel로 설치하고 `pip check`와 기본 테스트가 통과했습니다.
+  이 추가 3.14 검사에서는 DB 통합 테스트 19개를 생략하고 83개를 실행했습니다.
+- `neo4j:2026.09.0`의 `linux/amd64` 이미지를 `docker save`로 저장하고 `docker load`로 다시 불러왔습니다.
+  이미지 태그·플랫폼이 유지되었으며 `check_neo4j`가 성공했습니다.
+- 반입 자원은 Git에서 제외된 `offline/`에 준비했습니다. Neo4j tar, wheel 8개와 SHA-256 목록을 포함합니다.
+  Python 검증용 컨테이너 이미지는 사내 실행에 필요하지 않습니다.
+- GitHub Actions는 Python **3.10.12와 3.14** 각각에서 wheel 다운로드 후 오프라인 설치 명령과 전체 테스트를 실행하도록 바꿨습니다.
+
+이 결과는 Linux amd64 검증 환경의 결과이며, 사내 OS·Docker 설치 상태·인증서 정책과 사내 LiteLLM 실서버 접속은
+사내에서 별도로 확인해야 합니다. 과거 Python 3.14 검증 결과는 아래에 그대로 보존합니다.
 
 ## GitHub 게시·새 clone 재현 검증
 

@@ -1,6 +1,6 @@
 # GraphRAG 페이지 실행과 이해하기
 
-이 페이지는 **현재 Neo4j의 서비스·팀·문서를 실제로 조회한 뒤, 그 근거로 LLM 답변을 만드는 실습 화면**입니다. 근거 검색만 먼저 실행할 수도 있습니다. Python 3.14와 Django는 기존 프로젝트 환경을 그대로 사용합니다.
+이 페이지는 **현재 Neo4j의 서비스·팀·문서를 실제로 조회한 뒤, 그 근거로 LLM 답변을 만드는 실습 화면**입니다. 근거 검색만 먼저 실행할 수도 있습니다. 사내 Python 3.10.12와 Django를 사용하며, 별도의 Python 3.14 개발 환경도 지원합니다.
 
 새 문서는 [문서 등록 페이지](http://127.0.0.1:8000/documents/)에서 입력하고, LLM이 추출한 관계를 검토한 뒤 저장할 수 있습니다. 저장 결과는 다음 GraphRAG 조회에 반영됩니다. 단계별 실습은 [문서 등록과 관계 추출](08_DOCUMENT_INGESTION.md)을 참고하세요.
 
@@ -10,10 +10,10 @@
 
 ## 1. 화면을 먼저 열기
 
-프로젝트 최상위 폴더에서 실행합니다. 아직 초기 설치를 하지 않았다면 [README](../README.md)의 Python 가상환경, `.env`, Neo4j 설치·예제 적재 절차부터 진행하세요. 이미 있는 `.env`를 `.env.example`로 덮어쓰지 않습니다.
+프로젝트 최상위 폴더에서 실행합니다. 아직 초기 설치를 하지 않았다면 [README](../README.md)의 Python 가상환경, `.env`, Neo4j 설치·예제 적재 절차부터 진행하세요. 사내에서는 먼저 [오프라인 반입 가이드](03_OFFLINE_SETUP.md)에 따라 Neo4j tar 이미지를 `docker image load`하고 Python 패키지를 설치합니다. 이미 있는 `.env`를 `.env.example`로 덮어쓰지 않습니다.
 
 ```powershell
-docker compose up -d neo4j
+docker compose up -d --pull never --wait neo4j
 .\.venv\Scripts\python.exe manage.py check_neo4j
 .\.venv\Scripts\python.exe manage.py seed_graph
 .\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
@@ -44,11 +44,12 @@ LITELLM_MODEL=your-internal-model-alias
 LITELLM_API_KEY=
 LITELLM_TIMEOUT=120
 LITELLM_MAX_TOKENS=700
+LLM_EXTRACTION_MAX_TOKENS=3000
 ```
 
 `LITELLM_API_KEY`는 인증이 필요한 경우 사내에서 발급받은 호출용 키를 입력합니다. 서버가 인증을 사용하지 않을 때만 비워 둡니다. 관리자 마스터 키를 받을 필요는 없습니다. 실제 키는 `.env`나 사내 비밀 설정에만 보관하며 Git에 올리지 않습니다. 화면과 브라우저 JavaScript에는 키를 넣지 않습니다. [LiteLLM 모델 별칭 설명](https://docs.litellm.ai/docs/proxy/configs), [호출용 가상 키](https://docs.litellm.ai/docs/proxy/virtual_keys)
 
-`LITELLM_TIMEOUT`은 초 단위 대기 제한이고 `LITELLM_MAX_TOKENS`는 답변의 최대 출력 토큰 수입니다. 모델 서버가 바쁘거나 긴 답변이 필요하면 사내 운영 기준에 맞춰 조정합니다.
+`LITELLM_TIMEOUT`은 초 단위 대기 제한이고 `LITELLM_MAX_TOKENS`는 답변의 최대 출력 토큰 수입니다. `LLM_EXTRACTION_MAX_TOKENS`는 문서 관계 추출의 최대 출력 토큰 수로, 구조화된 결과가 길어질 수 있어 답변보다 크게 설정합니다. 모델 서버가 바쁘거나 긴 답변이 필요하면 사내 운영 기준에 맞춰 조정합니다. LiteLLM 서버나 SDK를 이 가상환경에 추가 설치할 필요는 없습니다.
 
 설정을 저장한 뒤 Django 서버를 `Ctrl+C`로 종료하고 다시 실행합니다.
 
@@ -201,8 +202,8 @@ API에는 Django CSRF 보호가 적용됩니다. 브라우저 페이지는 필�
 
 ### 기존 사내 LiteLLM을 사용할 경우
 
-1. 저장소와 [기본 오프라인 실행 자원](03_OFFLINE_SETUP.md)을 준비합니다.
-2. 사내 PC에서 Neo4j와 Python 환경을 설치하고 예제 데이터를 적재합니다.
+1. 저장소와 [기본 오프라인 실행 자원](03_OFFLINE_SETUP.md)을 준비합니다. Neo4j 이미지는 외부 준비 PC에서 tar로 저장해 반입하며, 사내에서 `pull`하지 않습니다.
+2. 사내 Python 3.10.12로 새 가상환경을 만들고 반입한 wheel을 설치합니다. Neo4j 이미지를 불러와 `--pull never`로 시작한 뒤 예제 데이터를 적재합니다.
 3. 사내 `.env`의 `LLM_PROVIDER`를 `litellm`으로 설정하고 사내 접속 정보를 입력합니다.
 4. Neo4j 연결 → 근거만 조회 → 모델 상태 → 실제 답변 순서로 확인합니다.
 
